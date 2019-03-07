@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    ports:
+      - 5432:5432
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:5.4.0
+  #   ports:
+  #     - 9200:9200
+  app:
+    image: dgp-container
+    ports:
+    - "8080:8080"
+    restart: always
+    command: ['./wait-for-it.sh', 'db:5432', '--', './docker-go-postgres']
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+      # - elasticsearch
+    links:
+      - db
+      # - elasticsearch
